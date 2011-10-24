@@ -1,0 +1,39 @@
+### SNAKES!?!
+
+This is a Byzantine concoction of a web framework(?).
+
+Run it like so: ./server.py
+
+The server script runs all the scripts in /handlers.
+Most of these will just start listening for requests
+on a socket. It then serves up the contents of /public
+in basic CGI fashion. These scripts will generally talk
+to the sockets and render the output to the user.
+
+There is no real good mapping to MVC design here. The
+handlers are basically any long-running task. They listen
+on bi-directional pipes, so may be used for input or
+output. The scripts in /public are called by URL, so they're
+probably most like controllers, but feel free to use them
+however you see fit. The Python CGI server will serve
+anything it thinks is CGI as CGI (chmod +x) and anything
+else as static.
+
+My examples use m4 to render the templates, but feel free to
+use sed or whatever you can dream up. I'm probably spawning
+way too many processes per request this way, but I'm not
+really aiming for practicality in high load situations.
+Just tinkering.
+
+When you start the server, the /handler directory will fill
+up with socket files. You can read and write to these files
+from the command line or symlink them to other files outside
+the server root in any wild and dangerous fashion you devise.
+
+Be warned: this framework does nothing to discourage stupidity.
+
+The examples should provide enough clues as to how to get
+started. Each page is mapped to a handler, but this is in 
+no way a requirement. /lib/makesock.sh gives you a couple
+convenience functions for creating a socket file and cleaning
+it up when the server shuts down.

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Fill in database credentials and save as mysql.sh
+alias mysqlconnect="mysql --user=root --password=PASSWORD DATABASE"
