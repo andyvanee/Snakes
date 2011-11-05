@@ -1,6 +1,6 @@
-### SNAKES!?!
+### SNAKES 0.001
 
-This is a Byzantine concoction of a web framework(?).
+This is a Byzantine concoction of a web framework.
 
 Run it like so: ./server.py
 
@@ -37,3 +37,45 @@ started. Each page is mapped to a handler, but this is in
 no way a requirement. /lib/makesock.sh gives you a couple
 convenience functions for creating a socket file and cleaning
 it up when the server shuts down.
+
+
+## Roadmap for 0.002
+
+Unique channels for each request. At the moment there's no guarantee
+that one request won't get the response of another request. This
+is obviously very bad.
+
+So, a couple major architectural changes:
+
+- The launcher should create the socket for the subprocess and
+  pass it as the first argument to the script.
+
+- This socket will only be used for requests
+
+- The router will create callback sockets and pass them to the 
+  subprocess as part of a request
+
+- The router is free to recycle these callback sockets between requests
+  when it makes sense to do so, making sure to flush any stale data
+  in the socket
+
+- FCGI scripts in /public need to go. Launching these on each request
+  makes no sense.
+
+- WSGI on the Python side makes more sense.
+
+The Launcher and Server will be in the Python frontend. The router
+could just be the default handler, or part of the Python server. Might
+need to try both to see what makes the most sense. 
+
+
+#### A Basic Request
+
+- echo.sh listens on echo.sock
+- handler.py posts an incoming request to echo.sock including
+  the address of the response socket ( eg. /resp/1a8dyyc.sock )
+- echo.sh processes the request and posts the response back to the
+  provided socket.
+
+There is still the issue that a single script will block successive
+calls to that script until it has completed it's task. 
